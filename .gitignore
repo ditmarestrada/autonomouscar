@@ -1,0 +1,16 @@
+# macOS
+.DS_Store
+
+# Eclipse workspace metadata
+.metadata/
+
+# Eclipse generated output
+**/bin/
+**/target/
+
+# Eclipse local/project-specific settings
+**/.settings/
+
+# Optional logs/temp files
+*.log
+*.tmp

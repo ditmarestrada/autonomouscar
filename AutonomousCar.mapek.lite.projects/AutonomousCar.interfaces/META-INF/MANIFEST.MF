@@ -9,5 +9,6 @@ Export-Package: sua.autonomouscar.devices.interfaces,
  sua.autonomouscar.interaction.interfaces,
  sua.autonomouscar.interfaces,
  sua.autonomouscar.simulation.interfaces
+Import-Package: sua.autonomouscar.devices.interfaces
 Automatic-Module-Name: AutonomousCar.interfaces
 Bundle-RequiredExecutionEnvironment: JavaSE-11

@@ -33,7 +33,8 @@ import autonomouscar.mapek.lite.adaptation.resources.ADS_L3_1a_AdaptationRule;
 import autonomouscar.mapek.lite.adaptation.resources.ADS_L3_1b_AdaptationRule;
 import autonomouscar.mapek.lite.adaptation.resources.ADS_L3_2_AdaptationRule;
 import autonomouscar.mapek.lite.adaptation.resources.ADS_L3_3_AdaptationRule;
-
+import autonomouscar.mapek.lite.adaptation.resources.ADS_L3_4_AdaptationRule;
+import autonomouscar.mapek.lite.adaptation.resources.ADS_L3_5_AdaptationRule;
 
 public class Activator implements BundleActivator {
 
@@ -96,10 +97,12 @@ public class Activator implements BundleActivator {
 		IAdaptiveReadyComponent theIluminacionConfortAdaptationRuleARC = BasicMAPEKLiteLoopHelper.deployAdaptationRule(new IluminacionConfortAdaptationRule(bundleContext));		
 		IAdaptiveReadyComponent theADS_L3_6_Rule = BasicMAPEKLiteLoopHelper.deployAdaptationRule(new ADS_L3_6_AdaptationRule(bundleContext));
 		IAdaptiveReadyComponent theADS_L3_8_Rule = BasicMAPEKLiteLoopHelper.deployAdaptationRule(new ADS_L3_8_AdaptationRule(bundleContext));
-		IAdaptiveReadyComponent theADS_L3_1a_Rule = BasicMAPEKLiteLoopHelper.deployAdaptationRule(new ADS_L3_1a_AdaptationRule(bundleContext));
-        IAdaptiveReadyComponent theADS_L3_1b_Rule = BasicMAPEKLiteLoopHelper.deployAdaptationRule(new ADS_L3_1b_AdaptationRule(bundleContext));
-        IAdaptiveReadyComponent theADS_L3_2_Rule = BasicMAPEKLiteLoopHelper.deployAdaptationRule(new ADS_L3_2_AdaptationRule(bundleContext));
-        IAdaptiveReadyComponent theADS_L3_3_Rule = BasicMAPEKLiteLoopHelper.deployAdaptationRule(new ADS_L3_3_AdaptationRule(bundleContext));
+        IAdaptiveReadyComponent theADS_L3_1a_Rule = BasicMAPEKLiteLoopHelper.deployAdaptationRule(new ADS_L3_1a_AdaptationRule(bundleContext));
+		IAdaptiveReadyComponent theADS_L3_1b_Rule = BasicMAPEKLiteLoopHelper.deployAdaptationRule(new ADS_L3_1b_AdaptationRule(bundleContext));
+		IAdaptiveReadyComponent theADS_L3_2_Rule = BasicMAPEKLiteLoopHelper.deployAdaptationRule(new ADS_L3_2_AdaptationRule(bundleContext));
+		IAdaptiveReadyComponent theADS_L3_3_Rule = BasicMAPEKLiteLoopHelper.deployAdaptationRule(new ADS_L3_3_AdaptationRule(bundleContext));
+		IAdaptiveReadyComponent theADS_L3_4_Rule = BasicMAPEKLiteLoopHelper.deployAdaptationRule(new ADS_L3_4_AdaptationRule(bundleContext));
+		IAdaptiveReadyComponent theADS_L3_5_Rule = BasicMAPEKLiteLoopHelper.deployAdaptationRule(new ADS_L3_5_AdaptationRule(bundleContext));
 
 		// ---------------------------------------------------------
 		// 3. MONITORS

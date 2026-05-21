@@ -7,6 +7,7 @@
 # Eclipse generated output
 **/bin/
 **/target/
+**/*.class
 
 # Eclipse local/project-specific settings
 **/.settings/
@@ -14,3 +15,7 @@
 # Optional logs/temp files
 *.log
 *.tmp
+
+# Runtime-generated MAPE-K artifacts
+AutonomousCar.mapek.lite.projects/RuntimeRepositories/AutonomousCar/
+AutonomousCar.mapek.lite.projects/**/AdaptationReports/

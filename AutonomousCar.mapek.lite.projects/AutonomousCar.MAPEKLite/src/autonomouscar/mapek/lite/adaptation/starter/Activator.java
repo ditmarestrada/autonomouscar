@@ -18,6 +18,12 @@ import sua.autonomouscar.infraestructure.devices.ARC.SteeringARC;
 import sua.autonomouscar.infraestructure.driving.ARC.FallbackPlanARC;
 import sua.autonomouscar.infraestructure.driving.ARC.L3_DrivingServiceARC;
 
+import autonomouscar.mapek.lite.adaptation.resources.Interact1aRule;
+import autonomouscar.mapek.lite.adaptation.resources.Interact1bRule;
+import autonomouscar.mapek.lite.adaptation.resources.Interact1cRule;
+import autonomouscar.mapek.lite.adaptation.resources.MonitorDriverAttention;
+import autonomouscar.mapek.lite.adaptation.resources.SondaDriverAttention;
+
 public class Activator implements BundleActivator {
 
 	private static BundleContext context;
@@ -51,16 +57,32 @@ public class Activator implements BundleActivator {
 		
 		
 		// ADAPTATION PROPERTIES
-		IKnowledgeProperty kp_Modo = BasicMAPEKLiteLoopHelper.createKnowledgeProperty("Modo");
+		//IKnowledgeProperty kp_Modo = BasicMAPEKLiteLoopHelper.createKnowledgeProperty("Modo");
+		IKnowledgeProperty kp_DriverAttention = BasicMAPEKLiteLoopHelper.createKnowledgeProperty("DriverAttention");
 
 		// ADAPTATION RULES
- 		IAdaptiveReadyComponent theIluminacionConfortAdaptationRuleARC = BasicMAPEKLiteLoopHelper.deployAdaptationRule(new IluminacionConfortAdaptationRule(bundleContext));		
+ 		IAdaptiveReadyComponent theIluminacionConfortAdaptationRuleARC = BasicMAPEKLiteLoopHelper.deployAdaptationRule(new IluminacionConfortAdaptationRule(bundleContext));
+ 		
+ 		IAdaptiveReadyComponent interact1aRuleARC =
+ 				BasicMAPEKLiteLoopHelper.deployAdaptationRule(new Interact1aRule(bundleContext));
+
+ 		IAdaptiveReadyComponent interact1bRuleARC =
+ 				BasicMAPEKLiteLoopHelper.deployAdaptationRule(new Interact1bRule(bundleContext));
+
+ 		IAdaptiveReadyComponent interact1cRuleARC =
+ 				BasicMAPEKLiteLoopHelper.deployAdaptationRule(new Interact1cRule(bundleContext));
  		
 		// MONITORS
-		IAdaptiveReadyComponent theModoMonitorARC = BasicMAPEKLiteLoopHelper.deployMonitor(new MonitorModo(bundleContext));		
+		IAdaptiveReadyComponent theModoMonitorARC = BasicMAPEKLiteLoopHelper.deployMonitor(new MonitorModo(bundleContext));
+		
+		IAdaptiveReadyComponent driverAttentionMonitorARC =
+				BasicMAPEKLiteLoopHelper.deployMonitor(new MonitorDriverAttention(bundleContext));
 
 		// PROBES
 		IAdaptiveReadyComponent theModoProbeARC = BasicMAPEKLiteLoopHelper.deployProbe(new SondaModo(bundleContext), theModoMonitorARC);
+		
+		IAdaptiveReadyComponent driverAttentionProbeARC =
+				BasicMAPEKLiteLoopHelper.deployProbe(new SondaDriverAttention(bundleContext), driverAttentionMonitorARC);
 
 		//
 	}

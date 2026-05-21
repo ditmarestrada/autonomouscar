@@ -28,6 +28,7 @@ import sua.autonomouscar.interfaces.ERoadStatus;
 import sua.autonomouscar.interfaces.ERoadType;
 import sua.autonomouscar.interfaces.IIdentifiable;
 import sua.autonomouscar.simulation.IManualSimulatorStepsManager;
+import autonomouscar.mapek.lite.adaptation.resources.SondaDriverAttention;
 
 public class MyCommandProvider {
 
@@ -201,6 +202,24 @@ public class MyCommandProvider {
 		laSonda.sendSelfConfigureRequest();
 	}
 
+	private void refreshDriverAttentionProbe() {
+		try {
+			String filter = String.format("(%s=%s)", IIdentifiable.ID, SondaDriverAttention.ID);
+			IAdaptiveReadyComponent probeARC = SearchTools.doSearch(this.context, IAdaptiveReadyComponent.class, filter);
+			if (probeARC == null) {
+				return;
+			}
+
+			SondaDriverAttention probe =
+				(SondaDriverAttention) probeARC.getServiceSupply(ProbeARC.SUPPLY_PROBESERVICE);
+
+			if (probe != null) {
+				probe.sampleAndReport();
+			}
+		} catch (Exception e) {
+			// dejamos el flujo de consola estable aunque la probe no esté disponible
+		}
+	}
 
 	
 	public void driver(String property, String s) {
@@ -214,6 +233,8 @@ public class MyCommandProvider {
 				sensor.setFaceStatus(EFaceStatus.DISTRACTED);
 			else if ( s.equalsIgnoreCase("sleeping") || s.equalsIgnoreCase("s") )
 				sensor.setFaceStatus(EFaceStatus.SLEEPING);
+			
+			this.refreshDriverAttentionProbe();
 			
 		} else if ( property.equalsIgnoreCase("hands") ) {
 			if ( s.equalsIgnoreCase("on-wheel") ) {

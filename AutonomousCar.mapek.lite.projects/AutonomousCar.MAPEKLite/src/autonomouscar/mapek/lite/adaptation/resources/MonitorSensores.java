@@ -18,10 +18,15 @@ public class MonitorSensores extends Monitor {
 		try {
 			String status = (String) arg; // Llegará "OK" o "FALLO"
 			String sensorRightDistance = status.equals("OK") ? "RightDistanceSensor" : "NO_DISPONIBLE";
+			String sensorFrontDistance = status.equals("OK") ? "FrontDistanceSensor" : "NO_DISPONIBLE";
+
+			System.out.println("MonitorSensores front = " + sensorFrontDistance);
 
 			// 1. Actualizamos el estado del sensor
 			IKnowledgeProperty kpSensorRight = BasicMAPEKLiteLoopHelper.getKnowledgeProperty("sensor-right-distance");
 			if (kpSensorRight != null) kpSensorRight.setValue(sensorRightDistance);
+			IKnowledgeProperty kpSensorFront = BasicMAPEKLiteLoopHelper.getKnowledgeProperty("sensor-front-distance");
+			if (kpSensorFront != null) kpSensorFront.setValue(sensorFrontDistance);
 
 			// 2. Evaluamos qué FallbackPlan debería estar activo según las tablas del PDF
 			IKnowledgeProperty kpL3 = BasicMAPEKLiteLoopHelper.getKnowledgeProperty("active-l3-service");

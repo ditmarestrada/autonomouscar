@@ -27,6 +27,7 @@ public class SondaSensores extends Probe {
 					
 					// Comprobamos si la lista tiene elementos
 					String estadoActual = (sensores != null && !sensores.isEmpty()) ? "OK" : "FALLO";
+					//String estadoActual = "FALLO"; 
 					
 					this.reportMeasure(estadoActual); 
 					

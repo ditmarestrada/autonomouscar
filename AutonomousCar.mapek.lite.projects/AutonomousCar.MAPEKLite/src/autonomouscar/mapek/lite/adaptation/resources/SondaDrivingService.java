@@ -26,11 +26,22 @@ public class SondaDrivingService extends Probe {
 					String filter = String.format("(%s=true)", DrivingService.ACTIVE);
 					IDrivingService service = OSGiUtils.getService(this.getBundleContext(), IDrivingService.class, filter);
 					
-					String idActual = (service != null) ? service.getId() : "NONE";
-					
+					//String idActual = (service != null) ? service.getId() : "NONE";
+					// REEMPLAZA todo el bloque anterior por esto:
+					String idActual = "NONE";
+					if (service != null) {
+					    String sid = service.getId();
+					    if ("L3_CityChauffer".equals(sid))            idActual = "driving.L3.CityChauffer";
+					    else if ("L3_HighwayChauffer".equals(sid))    idActual = "driving.L3.HighwayChauffer";
+					    else if ("L3_TrafficJamChauffer".equals(sid)) idActual = "driving.L3.TrafficJamChauffer";
+					    else if ("L2_AdaptiveCruiseControl".equals(sid)) idActual = "driving.L2.AdaptiveCruiseControl";
+					    else if ("L1_AssistedDriving".equals(sid))    idActual = "driving.L1.AssistedDriving";
+					    else idActual = sid;
+					}
+
 					if (!idActual.equals(ultimoServicio)) {
-						ultimoServicio = idActual;
-						this.reportMeasure(idActual);
+					    ultimoServicio = idActual;
+					    this.reportMeasure(idActual);
 					}
 				} catch (InterruptedException e) {
 					Thread.currentThread().interrupt();

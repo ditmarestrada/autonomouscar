@@ -19,6 +19,8 @@ public class MonitorDrivingService extends Monitor {
 	@Override
 	public IMonitor report(Object arg) {
 		String activeServiceId = (String) arg;
+		if ("NONE".equals(activeServiceId)) return this; 
+		
 		IKnowledgeProperty kp = BasicMAPEKLiteLoopHelper.getKnowledgeProperty("active-l3-service");
 		
 		if (kp != null) {

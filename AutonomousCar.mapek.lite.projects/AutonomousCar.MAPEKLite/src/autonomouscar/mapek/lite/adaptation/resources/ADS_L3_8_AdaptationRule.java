@@ -29,10 +29,31 @@ public class ADS_L3_8_AdaptationRule extends AdaptationRule {
 		this.setListenToKnowledgePropertyChanges("sensor-right-distance");
 	}
 
-	@Override
+	/*@Override
 	public boolean checkAffectedByChange(IKnowledgeProperty property) {
 		return true; // Permitimos que la regla evalúe siempre que haya un cambio
+	}*/
+	@Override
+	public boolean checkAffectedByChange(IKnowledgeProperty property) {
+	    if (kp_ActiveL3Service == null) 
+	        kp_ActiveL3Service = BasicMAPEKLiteLoopHelper.getKnowledgeProperty("active-l3-service");
+	    if (kp_FallbackPlanActivo == null) 
+	        kp_FallbackPlanActivo = BasicMAPEKLiteLoopHelper.getKnowledgeProperty("fallback-plan-activo");
+
+	    if (kp_ActiveL3Service == null || kp_FallbackPlanActivo == null) return false;
+
+	    String active = (String) kp_ActiveL3Service.getValue();
+	    String fallback = (String) kp_FallbackPlanActivo.getValue();
+
+	    if (active == null || "NONE".equals(active)) return false;
+	    if (fallback == null) return false;
+
+	    // Solo actúa si el fallback actual es diferente al que ya aplicamos
+	    if (fallback.equals(fallbackAplicado)) return false;
+
+	    return true;
 	}
+	
 
 	@Override
 	public IRuleSystemConfiguration onExecute(IKnowledgeProperty property) throws RuleException {

@@ -19,7 +19,7 @@ import sua.autonomouscar.infraestructure.driving.ARC.FallbackPlanARC;
 import sua.autonomouscar.infraestructure.driving.ARC.L3_DrivingServiceARC;
 import es.upv.pros.tatami.osgi.utils.logger.SmartLogger;
 
-// Imports de tus Requisitos ADS L3-6 y L3-8
+// Imports los Requisitos ADS L3-6 y L3-8
 import autonomouscar.mapek.lite.adaptation.resources.ADS_L3_6_AdaptationRule;
 import autonomouscar.mapek.lite.adaptation.resources.MonitorCarretera;
 import autonomouscar.mapek.lite.adaptation.resources.SondaCarretera;
@@ -29,6 +29,11 @@ import autonomouscar.mapek.lite.adaptation.resources.SondaDrivingService;
 import autonomouscar.mapek.lite.adaptation.resources.ADS_L3_8_AdaptationRule;
 import autonomouscar.mapek.lite.adaptation.resources.MonitorSensores;
 import autonomouscar.mapek.lite.adaptation.resources.SondaSensores;
+import autonomouscar.mapek.lite.adaptation.resources.ADS_L3_1a_AdaptationRule;
+import autonomouscar.mapek.lite.adaptation.resources.ADS_L3_1b_AdaptationRule;
+import autonomouscar.mapek.lite.adaptation.resources.ADS_L3_2_AdaptationRule;
+import autonomouscar.mapek.lite.adaptation.resources.ADS_L3_3_AdaptationRule;
+
 
 public class Activator implements BundleActivator {
 
@@ -57,7 +62,6 @@ public class Activator implements BundleActivator {
 		// STARTING THE MAPE-K LOOP
 		BasicMAPEKLiteLoopHelper.startLoopModules();
 		
-		BasicMAPEKLiteLoopHelper.addInitialSelfConfigurationCapabilities(createInitialSystemConfiguration());
 		
 		// ---------------------------------------------------------
 		// 1. ADAPTATION PROPERTIES (Knowledge)
@@ -72,7 +76,19 @@ public class Activator implements BundleActivator {
 		// Propiedades L3-8
 		IKnowledgeProperty kp_SensorRight = BasicMAPEKLiteLoopHelper.createKnowledgeProperty("sensor-right-distance");
 		IKnowledgeProperty kp_Fallback = BasicMAPEKLiteLoopHelper.createKnowledgeProperty("fallback-plan-activo");
+		IKnowledgeProperty kp_SensorFrontDistance = BasicMAPEKLiteLoopHelper.createKnowledgeProperty("sensor-front-distance");
+		
+		//kp_RoadType.setValue("CITY");
+		kp_RoadType.setValue("HIGHWAY");
+		kp_RoadStatus.setValue("FLUID");
+		//kp_ActiveL3Service.setValue("driving.L3.CityChauffer");
+		kp_ActiveL3Service.setValue("NONE");
+		kp_SensorRight.setValue("RightDistanceSensor");
+		kp_Fallback.setValue("EMERGENCY");
+		kp_SensorFrontDistance.setValue("FrontDistanceSensor");
+		//kp_SensorFrontDistance.setValue("NO_DISPONIBLE");
 
+		BasicMAPEKLiteLoopHelper.addInitialSelfConfigurationCapabilities(createInitialSystemConfiguration());
 
 		// ---------------------------------------------------------
 		// 2. ADAPTATION RULES
@@ -80,7 +96,10 @@ public class Activator implements BundleActivator {
 		IAdaptiveReadyComponent theIluminacionConfortAdaptationRuleARC = BasicMAPEKLiteLoopHelper.deployAdaptationRule(new IluminacionConfortAdaptationRule(bundleContext));		
 		IAdaptiveReadyComponent theADS_L3_6_Rule = BasicMAPEKLiteLoopHelper.deployAdaptationRule(new ADS_L3_6_AdaptationRule(bundleContext));
 		IAdaptiveReadyComponent theADS_L3_8_Rule = BasicMAPEKLiteLoopHelper.deployAdaptationRule(new ADS_L3_8_AdaptationRule(bundleContext));
-
+		IAdaptiveReadyComponent theADS_L3_1a_Rule = BasicMAPEKLiteLoopHelper.deployAdaptationRule(new ADS_L3_1a_AdaptationRule(bundleContext));
+        IAdaptiveReadyComponent theADS_L3_1b_Rule = BasicMAPEKLiteLoopHelper.deployAdaptationRule(new ADS_L3_1b_AdaptationRule(bundleContext));
+        IAdaptiveReadyComponent theADS_L3_2_Rule = BasicMAPEKLiteLoopHelper.deployAdaptationRule(new ADS_L3_2_AdaptationRule(bundleContext));
+        IAdaptiveReadyComponent theADS_L3_3_Rule = BasicMAPEKLiteLoopHelper.deployAdaptationRule(new ADS_L3_3_AdaptationRule(bundleContext));
 
 		// ---------------------------------------------------------
 		// 3. MONITORS
@@ -100,6 +119,10 @@ public class Activator implements BundleActivator {
 		BasicMAPEKLiteLoopHelper.deployProbe(new SondaSensores(bundleContext), theMonitorSensores);
 
 
+		
+		logger.info("Creada property road-type: " + kp_RoadType);
+		logger.info("Creada property active-l3-service: " + kp_ActiveL3Service);
+		logger.info("Creada property sensor-front-distance: " + kp_SensorFrontDistance);
 	
 	}
 
@@ -113,30 +136,127 @@ public class Activator implements BundleActivator {
 		IRuleComponentsSystemConfiguration theInitialSystemConfiguration = SystemConfigurationHelper.createPartialSystemConfiguration("InitialConfiguration_" + ITimeStamped.getCurrentTimeStamp());
 			
 		// Añadimos los componentes "device.RoadSensor" y "device.Engine"
-		SystemConfigurationHelper.componentToAdd(theInitialSystemConfiguration, "device.RoadSensor", "1.0.0");
+		// Sensores y dispositivos básicos
 		SystemConfigurationHelper.componentToAdd(theInitialSystemConfiguration, "device.Engine", "1.0.0");
-		SystemConfigurationHelper.componentToRemove(theInitialSystemConfiguration, "device.Steering", "1.0.0");
+		SystemConfigurationHelper.componentToAdd(theInitialSystemConfiguration, "device.Steering", "1.0.0");
+
+		SystemConfigurationHelper.componentToAdd(theInitialSystemConfiguration, "device.FrontDistanceSensor", "1.0.0");
 		SystemConfigurationHelper.componentToAdd(theInitialSystemConfiguration, "device.RightDistanceSensor", "1.0.0");
+
+		SystemConfigurationHelper.componentToAdd(theInitialSystemConfiguration, "device.LeftLineSensor", "1.0.0");
+		SystemConfigurationHelper.componentToAdd(theInitialSystemConfiguration, "device.RightLineSensor", "1.0.0");
+		SystemConfigurationHelper.componentToAdd(theInitialSystemConfiguration, "device.RearDistanceSensor", "1.0.0");
+		SystemConfigurationHelper.componentToAdd(theInitialSystemConfiguration, "device.LeftDistanceSensor", "1.0.0");
+
+		// Servicios de interacción
+		SystemConfigurationHelper.componentToAdd(theInitialSystemConfiguration, "interaction.NotificationService", "1.0.0");
 		
 		// Añadimos el servicio Fallback de emergencia
 		SystemConfigurationHelper.componentToAdd(theInitialSystemConfiguration, "driving.FallbackPlan.Emergency", "1.0.0");
 		
 		// Añadimos CityChauffer (Base para test L3-6)
-		SystemConfigurationHelper.componentToAdd(theInitialSystemConfiguration, "driving.L3.CityChauffer", "1.0.0");
-		
+		//SystemConfigurationHelper.componentToAdd(theInitialSystemConfiguration, "driving.L3.CityChauffer", "1.0.0");
+		SystemConfigurationHelper.componentToAdd(theInitialSystemConfiguration, "driving.L3.HighwayChauffer", "1.0.0");
+
 		// Añadimos el Sensor Derecho (Base para test L3-8)
-		SystemConfigurationHelper.componentToAdd(theInitialSystemConfiguration, "device.RightDistanceSensor", "1.0.0");
+		//SystemConfigurationHelper.componentToAdd(theInitialSystemConfiguration, "device.RightDistanceSensor", "1.0.0");
 		
 		// Bindings iniciales
 		SystemConfigurationHelper.bindingToAdd(theInitialSystemConfiguration, 
 				"driving.FallbackPlan.Emergency", "1.0.0", FallbackPlanARC.REQUIRED_ENGINE,
 				"device.Engine", "1.0.0", EngineARC.PROVIDED_DEVICE);
 
-		SystemConfigurationHelper.bindingToRemove(theInitialSystemConfiguration, 
-				"driving.FallbackPlan.Emergency", "1.0.0", FallbackPlanARC.REQUIRED_STEERING,
-				"device.Steering", "1.0.0", SteeringARC.PROVIDED_DEVICE);
+		SystemConfigurationHelper.bindingToAdd(
+			    theInitialSystemConfiguration, 
+			    "driving.FallbackPlan.Emergency", "1.0.0", FallbackPlanARC.REQUIRED_STEERING,
+			    "device.Steering", "1.0.0", SteeringARC.PROVIDED_DEVICE);
 
+		
+		SystemConfigurationHelper.bindingToAdd(theInitialSystemConfiguration,
+			   // "driving.L3.CityChauffer", "1.0.0",
+				"driving.L3.HighwayChauffer", "1.0.0",
+			    "required_engine",
+			    "device.Engine", "1.0.0",
+			    "provided_device");
+
+		SystemConfigurationHelper.bindingToAdd(theInitialSystemConfiguration,
+			    //"driving.L3.CityChauffer", "1.0.0",
+				"driving.L3.HighwayChauffer", "1.0.0",
+			    "required_frontdistancesensor",
+			    "device.FrontDistanceSensor", "1.0.0",
+			    "provided_sensor");
+
+		SystemConfigurationHelper.bindingToAdd(theInitialSystemConfiguration,
+			    //"driving.L3.CityChauffer", "1.0.0",
+				"driving.L3.HighwayChauffer", "1.0.0",
+			    "required_leftlinesensor",
+			    "device.LeftLineSensor", "1.0.0",
+			    "provided_sensor");
+
+		SystemConfigurationHelper.bindingToAdd(theInitialSystemConfiguration,
+			    //"driving.L3.CityChauffer", "1.0.0",
+				"driving.L3.HighwayChauffer", "1.0.0",
+			    "required_rightlinesensor",
+			    "device.RightLineSensor", "1.0.0",
+			    "provided_sensor");
+
+		SystemConfigurationHelper.bindingToAdd(theInitialSystemConfiguration,
+			    //"driving.L3.CityChauffer", "1.0.0",
+				"driving.L3.HighwayChauffer", "1.0.0",
+			    "required_notificationservice",
+			    "interaction.NotificationService", "1.0.0",
+			    "provided_service");
+		SystemConfigurationHelper.bindingToAdd(theInitialSystemConfiguration,
+			    //"driving.L3.CityChauffer", "1.0.0",
+				"driving.L3.HighwayChauffer", "1.0.0",
+			    "required_roadsensor",
+			    "device.RoadSensor", "1.0.0",
+			    "provided_sensor");
+
+		SystemConfigurationHelper.bindingToAdd(theInitialSystemConfiguration,
+			    //"driving.L3.CityChauffer", "1.0.0",
+				"driving.L3.HighwayChauffer", "1.0.0",
+			    "required_fallbackplan",
+			    "driving.FallbackPlan.Emergency", "1.0.0",
+			    "provided_drivingservice");
+		
+		SystemConfigurationHelper.bindingToAdd(theInitialSystemConfiguration,
+			    //"driving.L3.CityChauffer", "1.0.0",
+				"driving.L3.HighwayChauffer", "1.0.0",
+			    "required_steering",
+			    "device.Steering", "1.0.0",
+			    "provided_device");
+		
+		SystemConfigurationHelper.bindingToAdd(
+			    theInitialSystemConfiguration,
+			    "driving.FallbackPlan.Emergency", "1.0.0",
+			    "required_notificationservice",
+			    "interaction.NotificationService", "1.0.0",
+			    "provided_service");
+
+		SystemConfigurationHelper.bindingToAdd(theInitialSystemConfiguration,
+			    //"driving.L3.CityChauffer", "1.0.0",
+				"driving.L3.HighwayChauffer", "1.0.0",
+			    "required_reardistancesensor",
+			    "device.RearDistanceSensor", "1.0.0",
+			    "provided_sensor");
+
+		SystemConfigurationHelper.bindingToAdd(theInitialSystemConfiguration,
+			    //"driving.L3.CityChauffer", "1.0.0",
+				"driving.L3.HighwayChauffer", "1.0.0",
+			    "required_rightdistancesensor",
+			    "device.RightDistanceSensor", "1.0.0",
+			    "provided_sensor");
+
+		SystemConfigurationHelper.bindingToAdd(theInitialSystemConfiguration,
+			    //"driving.L3.CityChauffer", "1.0.0",
+				"driving.L3.HighwayChauffer", "1.0.0",
+			    "required_leftdistancesensor",
+			    "device.LeftDistanceSensor", "1.0.0",
+			    "provided_sensor");
+		
 		SystemConfigurationHelper.setParameter(theInitialSystemConfiguration, 
+				//"driving.L3.CityChauffer", "1.0.0", L3_DrivingServiceARC.PARAMETER_REFERENCESPEED, "100");
 				"driving.L3.HighwayChauffer", "1.0.0", L3_DrivingServiceARC.PARAMETER_REFERENCESPEED, "100");
 
 		return theInitialSystemConfiguration;

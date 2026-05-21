@@ -37,13 +37,32 @@ public class ADS_L3_6_AdaptationRule extends AdaptationRule {
 		kp_RoadStatus = BasicMAPEKLiteLoopHelper.getKnowledgeProperty("road-status");
 	}
 
-	@Override
-	public boolean checkAffectedByChange(IKnowledgeProperty property) {
+	//@Override
+	/*public boolean checkAffectedByChange(IKnowledgeProperty property) {
 		if (kp_ActiveL3Service == null || kp_RoadType == null || kp_RoadStatus == null) {
 			logger.trace("Faltan propiedades en el Knowledge. No se ejecuta la regla...");
 			return false;
 		}
 		return true;
+	}*/
+	@Override
+	public boolean checkAffectedByChange(IKnowledgeProperty property) {
+	    if (kp_ActiveL3Service == null) 
+	        kp_ActiveL3Service = BasicMAPEKLiteLoopHelper.getKnowledgeProperty("active-l3-service");
+	    if (kp_RoadType == null) 
+	        kp_RoadType = BasicMAPEKLiteLoopHelper.getKnowledgeProperty("road-type");
+	    if (kp_RoadStatus == null) 
+	        kp_RoadStatus = BasicMAPEKLiteLoopHelper.getKnowledgeProperty("road-status");
+
+	    if (kp_ActiveL3Service == null || kp_RoadType == null || kp_RoadStatus == null) return false;
+
+	    String active = (String) kp_ActiveL3Service.getValue();
+	    String roadType = (String) kp_RoadType.getValue();
+
+	    if (active == null || !"driving.L3.CityChauffer".equals(active)) return false;
+	    if (roadType == null || !"HIGHWAY".equals(roadType)) return false;
+
+	    return true;
 	}
 	
 	@Override

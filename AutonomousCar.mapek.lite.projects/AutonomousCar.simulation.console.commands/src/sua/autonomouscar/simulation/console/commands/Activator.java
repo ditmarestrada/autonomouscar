@@ -119,6 +119,7 @@ public class Activator implements BundleActivator {
 					//  Ejemplo: hay atasco
 					//		road status jam
 					"road",
+					"sensor",
 					
 				//	
 				// CONTROL MANUAL DEL VEHÍCULO

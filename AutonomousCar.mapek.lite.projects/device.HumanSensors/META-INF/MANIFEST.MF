@@ -19,5 +19,12 @@ Import-Package: es.upv.pros.tatami.adaptation.mapek.lite.ARC.artifacts.impl,
  sua.autonomouscar.infraestructure.devices,
  sua.autonomouscar.infraestructure.devices.ARC,
  sua.autonomouscar.interfaces
+Require-Bundle: AutonomousCar.MAPEKLite;bundle-version="1.0.0",
+ AutonomousCar.infraestructure;bundle-version="1.0.0",
+ driving.L2.AdaptiveCruiseControl;bundle-version="1.0.0",
+ AutonomousCar.interfaces;bundle-version="1.0.0",
+ AutonomousCar.simulation.console.commands;bundle-version="1.0.0",
+ AutonomousCar.simulation.simulator;bundle-version="1.0.0",
+ device.Engine;bundle-version="1.0.0"
 Automatic-Module-Name: device.HumanSensors
 Bundle-RequiredExecutionEnvironment: JavaSE-11

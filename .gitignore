@@ -17,5 +17,5 @@
 *.tmp
 
 # Runtime-generated MAPE-K artifacts
-RuntimeRepositories/AutonomousCar/
-**/AdaptationReports/
+AutonomousCar.mapek.lite.projects/RuntimeRepositories/AutonomousCar/
+AutonomousCar.mapek.lite.projects/**/AdaptationReports/

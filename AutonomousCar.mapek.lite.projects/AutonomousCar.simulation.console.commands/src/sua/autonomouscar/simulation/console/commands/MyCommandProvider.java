@@ -2,6 +2,7 @@ package sua.autonomouscar.simulation.console.commands;
 
 import org.osgi.framework.BundleContext;
 
+import autonomouscar.mapek.lite.adaptation.resources.SondaSensores;
 import es.upv.pros.tatami.adaptation.mapek.lite.ARC.artifacts.interfaces.IAdaptiveReadyComponent;
 import es.upv.pros.tatami.adaptation.mapek.lite.artifacts.interfaces.IKnowledgeProperty;
 import es.upv.pros.tatami.adaptation.mapek.lite.helpers.BasicMAPEKLiteLoopHelper;
@@ -336,13 +337,21 @@ public class MyCommandProvider {
 			sensor.setDistance(distance);
 	}
 	
+	/**
+	 * Para simular el estado del sensor frontal.
+	 * Uso: sensor front fail  → Simula fallo del sensor frontal (activa L3-1b → L1_AssistedDriving)
+	 *      sensor front ok    → Restaura el sensor frontal (activa L3-1a → L2_AdaptiveCruiseControl)
+	 */
 	public void sensor(String s, String state) {
-	    IKnowledgeProperty kp = BasicMAPEKLiteLoopHelper.getKnowledgeProperty("sensor-front-distance");
-	    if (kp != null && s.equalsIgnoreCase("front")) {
-	        if (state.equalsIgnoreCase("fail"))
-	            kp.setValue("NO_DISPONIBLE");
-	        else if (state.equalsIgnoreCase("ok"))
-	            kp.setValue("FrontDistanceSensor");
+	    if (s.equalsIgnoreCase("front")) {
+	        IKnowledgeProperty kp = BasicMAPEKLiteLoopHelper
+	            .getKnowledgeProperty("sensor-front-distance");
+	        if (kp != null) {
+	            if (state.equalsIgnoreCase("fail"))
+	                kp.setValue("NO_DISPONIBLE");
+	            else if (state.equalsIgnoreCase("ok"))
+	                kp.setValue("FrontDistanceSensor");
+	        }
 	    }
 	}
 	

@@ -20,8 +20,6 @@ public class MonitorSensores extends Monitor {
 			String sensorRightDistance = status.equals("OK") ? "RightDistanceSensor" : "NO_DISPONIBLE";
 			String sensorFrontDistance = status.equals("OK") ? "FrontDistanceSensor" : "NO_DISPONIBLE";
 
-			System.out.println("MonitorSensores front = " + sensorFrontDistance);
-
 			// 1. Actualizamos el estado del sensor
 			IKnowledgeProperty kpSensorRight = BasicMAPEKLiteLoopHelper.getKnowledgeProperty("sensor-right-distance");
 			if (kpSensorRight != null) kpSensorRight.setValue(sensorRightDistance);

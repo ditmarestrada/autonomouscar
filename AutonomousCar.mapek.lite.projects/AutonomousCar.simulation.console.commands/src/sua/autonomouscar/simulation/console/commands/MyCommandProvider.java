@@ -28,6 +28,9 @@ import sua.autonomouscar.interfaces.ERoadStatus;
 import sua.autonomouscar.interfaces.ERoadType;
 import sua.autonomouscar.interfaces.IIdentifiable;
 import sua.autonomouscar.simulation.IManualSimulatorStepsManager;
+import autonomouscar.mapek.lite.adaptation.resources.SondaDriverAttention;
+import autonomouscar.mapek.lite.adaptation.resources.SondaDriverHandsOnWheel;
+import autonomouscar.mapek.lite.adaptation.resources.SondaDriverSeatOccupied;
 
 public class MyCommandProvider {
 
@@ -179,15 +182,21 @@ public class MyCommandProvider {
 	public void knowledge() {
 			
 			IKnowledgeProperty kp_myProp = BasicMAPEKLiteLoopHelper.getKnowledgeProperty("my-prop");
+		    IKnowledgeProperty kp_DriverAttention = BasicMAPEKLiteLoopHelper.getKnowledgeProperty("DriverAttention");
 			
 			String myProp = "UNKNOWN";
 			if ( kp_myProp != null && kp_myProp.getValue() != null )
 				myProp = kp_myProp.getValue().toString();
+			
+		    String driverAttention = "UNKNOWN";
+		    if ( kp_DriverAttention != null && kp_DriverAttention.getValue() != null )
+		        driverAttention = kp_DriverAttention.getValue().toString();
 					
 			System.out.println("* * * * * * * * * * * * * * * * * * * * * * * *");
 			System.out.println("*  KNOWLEDGE");
 			System.out.println("* * * * * * * * * * * * * * * * * * * * * * * *");
 			System.out.println(String.format("*   my-prop: %s", myProp));
+		    System.out.println(String.format("*   DriverAttention: %s", driverAttention));
 			// ...
 			System.out.println("* * * * * * * * * * * * * * * * * * * * * * * *");
 
@@ -201,6 +210,68 @@ public class MyCommandProvider {
 		laSonda.sendSelfConfigureRequest();
 	}
 
+	private void refreshDriverAttentionProbe() {
+	    try {
+	        System.out.println(">>>>> REFRESH PROBE LLAMADO");
+	        String filter = String.format("(%s=%s)", IIdentifiable.ID, SondaDriverAttention.ID);
+	        IAdaptiveReadyComponent probeARC = SearchTools.doSearch(this.context, IAdaptiveReadyComponent.class, filter);
+	        System.out.println(">>>>> PROBE ARC: " + probeARC);
+	        if (probeARC == null) {
+	            System.out.println(">>>>> PROBE ARC ES NULL - no encontrada");
+	            return;
+	        }
+
+	        SondaDriverAttention probe =
+	            (SondaDriverAttention) probeARC.getServiceSupply(ProbeARC.SUPPLY_PROBESERVICE);
+	        System.out.println(">>>>> PROBE: " + probe);
+
+	        if (probe != null) {
+	            probe.sampleAndReport();
+	            System.out.println(">>>>> sampleAndReport EJECUTADO");
+	        }
+	    } catch (Exception e) {
+	        System.out.println(">>>>> ERROR EN PROBE: " + e.getMessage());
+	        e.printStackTrace();
+	    }
+	}
+	
+	private void refreshDriverHandsOnWheelProbe() {
+		try {
+			String filter = String.format("(%s=%s)", IIdentifiable.ID, SondaDriverHandsOnWheel.ID);
+			IAdaptiveReadyComponent probeARC = SearchTools.doSearch(this.context, IAdaptiveReadyComponent.class, filter);
+			if (probeARC == null) {
+				return;
+			}
+
+			SondaDriverHandsOnWheel probe =
+				(SondaDriverHandsOnWheel) probeARC.getServiceSupply(ProbeARC.SUPPLY_PROBESERVICE);
+
+			if (probe != null) {
+				probe.sampleAndReport();
+			}
+		} catch (Exception e) {
+			// mantenemos estable la consola aunque la probe no esté disponible
+		}
+	}
+	
+	private void refreshDriverSeatOccupiedProbe() {
+		try {
+			String filter = String.format("(%s=%s)", IIdentifiable.ID, SondaDriverSeatOccupied.ID);
+			IAdaptiveReadyComponent probeARC = SearchTools.doSearch(this.context, IAdaptiveReadyComponent.class, filter);
+			if (probeARC == null) {
+				return;
+			}
+
+			SondaDriverSeatOccupied probe =
+				(SondaDriverSeatOccupied) probeARC.getServiceSupply(ProbeARC.SUPPLY_PROBESERVICE);
+
+			if (probe != null) {
+				probe.sampleAndReport();
+			}
+		} catch (Exception e) {
+			// mantenemos estable la consola aunque la probe no esté disponible
+		}
+	}
 
 	
 	public void driver(String property, String s) {
@@ -215,12 +286,15 @@ public class MyCommandProvider {
 			else if ( s.equalsIgnoreCase("sleeping") || s.equalsIgnoreCase("s") )
 				sensor.setFaceStatus(EFaceStatus.SLEEPING);
 			
+			this.refreshDriverAttentionProbe();
+			
 		} else if ( property.equalsIgnoreCase("hands") ) {
 			if ( s.equalsIgnoreCase("on-wheel") ) {
 				sensor.setTheHandsOnTheSteeringWheel(true);
 			} else if ( s.equalsIgnoreCase("off-wheel") ) {
 				sensor.setTheHandsOnTheSteeringWheel(false);
 			}
+			this.refreshDriverHandsOnWheelProbe();
 		}
 	}
 		
@@ -253,8 +327,10 @@ public class MyCommandProvider {
 		IHumanSensors sensor = OSGiUtils.getService(context, IHumanSensors.class);
 		if ( sensor == null )
 			return;
-		if ( s.equalsIgnoreCase("driver") )
+		if ( s.equalsIgnoreCase("driver") ) {
 			sensor.setDriverSeatOccupancy(value);
+			this.refreshDriverSeatOccupiedProbe();
+		}
 		else if ( s.equalsIgnoreCase("copilot") )
 			sensor.setCopilotSeatOccupancy(value);
 	}

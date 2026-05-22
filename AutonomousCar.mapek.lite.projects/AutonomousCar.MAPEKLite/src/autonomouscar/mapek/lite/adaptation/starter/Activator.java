@@ -36,6 +36,20 @@ import autonomouscar.mapek.lite.adaptation.resources.ADS_L3_3_AdaptationRule;
 import autonomouscar.mapek.lite.adaptation.resources.ADS_L3_4_AdaptationRule;
 import autonomouscar.mapek.lite.adaptation.resources.ADS_L3_5_AdaptationRule;
 
+import autonomouscar.mapek.lite.adaptation.resources.Interact1aRule;
+import autonomouscar.mapek.lite.adaptation.resources.Interact1bRule;
+import autonomouscar.mapek.lite.adaptation.resources.Interact1cRule;
+import autonomouscar.mapek.lite.adaptation.resources.MonitorDriverAttention;
+import autonomouscar.mapek.lite.adaptation.resources.SondaDriverAttention;
+import autonomouscar.mapek.lite.adaptation.resources.MonitorDriverHandsOnWheel;
+import autonomouscar.mapek.lite.adaptation.resources.SondaDriverHandsOnWheel;
+import autonomouscar.mapek.lite.adaptation.resources.Interact2aRule;
+import autonomouscar.mapek.lite.adaptation.resources.Interact2bRule;
+import autonomouscar.mapek.lite.adaptation.resources.MonitorDriverSeatOccupied;
+import autonomouscar.mapek.lite.adaptation.resources.SondaDriverSeatOccupied;
+import autonomouscar.mapek.lite.adaptation.resources.Interact3aRule;
+import autonomouscar.mapek.lite.adaptation.resources.Interact3bRule;
+
 public class Activator implements BundleActivator {
 
 	private static BundleContext context;
@@ -46,6 +60,7 @@ public class Activator implements BundleActivator {
 	}
 
 	public void start(BundleContext bundleContext) throws Exception {
+		System.out.println(">>>>> ACTIVATOR CARGADO - VERSION NUEVA");
 		Activator.context = bundleContext;
 		
 		BasicMAPEKLiteLoopHelper.BUNDLECONTEXT = bundleContext;
@@ -61,8 +76,7 @@ public class Activator implements BundleActivator {
 		BasicMAPEKLiteLoopHelper.ADAPTATIONREPORTS_FOLDER = System.getProperty("adaptationreports.folder");
 		
 		// STARTING THE MAPE-K LOOP
-		BasicMAPEKLiteLoopHelper.startLoopModules();
-		
+		BasicMAPEKLiteLoopHelper.startLoopModules();				
 		
 		// ---------------------------------------------------------
 		// 1. ADAPTATION PROPERTIES (Knowledge)
@@ -88,7 +102,20 @@ public class Activator implements BundleActivator {
 		kp_Fallback.setValue("EMERGENCY");
 		kp_SensorFrontDistance.setValue("FrontDistanceSensor");
 		//kp_SensorFrontDistance.setValue("NO_DISPONIBLE");
+		
+		// Propiedad Interact-1
+		IKnowledgeProperty kp_DriverAttention = BasicMAPEKLiteLoopHelper.createKnowledgeProperty("DriverAttention");
+		System.out.println(">>>>> KP CREADA: " + kp_DriverAttention);
+		System.out.println(">>>>> KP ID: " + kp_DriverAttention.getId());
+		System.out.println(">>>>> KP VALUE: " + kp_DriverAttention.getValue());
+		
+		// Propiedad Interact-2
+		IKnowledgeProperty kp_DriverHandsOnWheel = BasicMAPEKLiteLoopHelper.createKnowledgeProperty("driver-hands-on-wheel");
+		
+		// Propiedad Interact-3
+		IKnowledgeProperty kp_DriverSeatOccupied = BasicMAPEKLiteLoopHelper.createKnowledgeProperty("driver-seat-occupied");
 
+		
 		BasicMAPEKLiteLoopHelper.addInitialSelfConfigurationCapabilities(createInitialSystemConfiguration());
 
 		// ---------------------------------------------------------
@@ -104,6 +131,14 @@ public class Activator implements BundleActivator {
         IAdaptiveReadyComponent theADS_L3_4_Rule = BasicMAPEKLiteLoopHelper.deployAdaptationRule(new ADS_L3_4_AdaptationRule(bundleContext));
  		IAdaptiveReadyComponent theADS_L3_5_Rule = BasicMAPEKLiteLoopHelper.deployAdaptationRule(new ADS_L3_5_AdaptationRule(bundleContext));
  		
+ 		IAdaptiveReadyComponent interact1aRuleARC = BasicMAPEKLiteLoopHelper.deployAdaptationRule(new Interact1aRule(bundleContext));
+ 		IAdaptiveReadyComponent interact1bRuleARC = BasicMAPEKLiteLoopHelper.deployAdaptationRule(new Interact1bRule(bundleContext));
+ 		IAdaptiveReadyComponent interact1cRuleARC = BasicMAPEKLiteLoopHelper.deployAdaptationRule(new Interact1cRule(bundleContext));	
+ 		IAdaptiveReadyComponent interact2aRuleARC = BasicMAPEKLiteLoopHelper.deployAdaptationRule(new Interact2aRule(bundleContext));
+ 		IAdaptiveReadyComponent interact2bRuleARC = BasicMAPEKLiteLoopHelper.deployAdaptationRule(new Interact2bRule(bundleContext));
+ 		IAdaptiveReadyComponent interact3aRuleARC = BasicMAPEKLiteLoopHelper.deployAdaptationRule(new Interact3aRule(bundleContext));
+ 		IAdaptiveReadyComponent interact3bRuleARC = BasicMAPEKLiteLoopHelper.deployAdaptationRule(new Interact3bRule(bundleContext));
+ 		
 		// ---------------------------------------------------------
 		// 3. MONITORS
 		// ---------------------------------------------------------
@@ -111,7 +146,10 @@ public class Activator implements BundleActivator {
 		IAdaptiveReadyComponent theMonitorCarretera = BasicMAPEKLiteLoopHelper.deployMonitor(new MonitorCarretera(bundleContext));
 		IAdaptiveReadyComponent theMonitorDS = BasicMAPEKLiteLoopHelper.deployMonitor(new MonitorDrivingService(bundleContext));
 		IAdaptiveReadyComponent theMonitorSensores = BasicMAPEKLiteLoopHelper.deployMonitor(new MonitorSensores(bundleContext));
-
+		
+		IAdaptiveReadyComponent driverAttentionMonitorARC = BasicMAPEKLiteLoopHelper.deployMonitor(new MonitorDriverAttention(bundleContext));		
+		IAdaptiveReadyComponent driverHandsOnWheelMonitorARC = BasicMAPEKLiteLoopHelper.deployMonitor(new MonitorDriverHandsOnWheel(bundleContext));
+		IAdaptiveReadyComponent driverSeatOccupiedMonitorARC = BasicMAPEKLiteLoopHelper.deployMonitor(new MonitorDriverSeatOccupied(bundleContext));
 
 		// ---------------------------------------------------------
 		// 4. PROBES
@@ -120,13 +158,19 @@ public class Activator implements BundleActivator {
 		BasicMAPEKLiteLoopHelper.deployProbe(new SondaCarretera(bundleContext), theMonitorCarretera);
 		BasicMAPEKLiteLoopHelper.deployProbe(new SondaDrivingService(bundleContext), theMonitorDS);
 		BasicMAPEKLiteLoopHelper.deployProbe(new SondaSensores(bundleContext), theMonitorSensores);
-
-
 		
 		logger.info("Creada property road-type: " + kp_RoadType);
 		logger.info("Creada property active-l3-service: " + kp_ActiveL3Service);
 		logger.info("Creada property sensor-front-distance: " + kp_SensorFrontDistance);
-	
+			
+		IAdaptiveReadyComponent driverAttentionProbeARC =
+				BasicMAPEKLiteLoopHelper.deployProbe(new SondaDriverAttention(bundleContext), driverAttentionMonitorARC);		
+		IAdaptiveReadyComponent driverHandsOnWheelProbeARC =
+				BasicMAPEKLiteLoopHelper.deployProbe(new SondaDriverHandsOnWheel(bundleContext), driverHandsOnWheelMonitorARC);		
+		IAdaptiveReadyComponent driverSeatOccupiedProbeARC =
+				BasicMAPEKLiteLoopHelper.deployProbe(new SondaDriverSeatOccupied(bundleContext), driverSeatOccupiedMonitorARC);
+
+		//		
 	}
 
 	public void stop(BundleContext bundleContext) throws Exception {
@@ -163,6 +207,14 @@ public class Activator implements BundleActivator {
 
 		// Añadimos el Sensor Derecho (Base para test L3-8)
 		//SystemConfigurationHelper.componentToAdd(theInitialSystemConfiguration, "device.RightDistanceSensor", "1.0.0");
+		
+		// Para Interact-1 , Interact-2 y Interact-3 
+		
+		SystemConfigurationHelper.componentToAdd(theInitialSystemConfiguration, "device.HumanSensors", "1.0.0");
+		SystemConfigurationHelper.componentToAdd(theInitialSystemConfiguration, "device.DriverFaceMonitor", "1.0.0");
+		SystemConfigurationHelper.componentToAdd(theInitialSystemConfiguration, "device.DriverSeatSensor", "1.0.0");
+		SystemConfigurationHelper.componentToAdd(theInitialSystemConfiguration, "device.CopilotSeatSensor", "1.0.0");
+		SystemConfigurationHelper.componentToAdd(theInitialSystemConfiguration, "device.HandsOnWheelSensor", "1.0.0");
 		
 		// Bindings iniciales
 		SystemConfigurationHelper.bindingToAdd(theInitialSystemConfiguration, 
@@ -257,6 +309,39 @@ public class Activator implements BundleActivator {
 			    "required_leftdistancesensor",
 			    "device.LeftDistanceSensor", "1.0.0",
 			    "provided_sensor");
+		
+
+
+		SystemConfigurationHelper.bindingToAdd(theInitialSystemConfiguration,
+				"device.HumanSensors", "1.0.0",
+				"required_facemonitor",
+				"device.DriverFaceMonitor", "1.0.0",
+				"provided_sensor");
+
+			SystemConfigurationHelper.bindingToAdd(theInitialSystemConfiguration,
+				"device.HumanSensors", "1.0.0",
+				"required_driverseatsensor",
+				"device.DriverSeatSensor", "1.0.0",
+				"provided_sensor");
+
+			SystemConfigurationHelper.bindingToAdd(theInitialSystemConfiguration,
+				"device.HumanSensors", "1.0.0",
+				"required_copilotseatsensor",
+				"device.CopilotSeatSensor", "1.0.0",
+				"provided_sensor");
+
+			SystemConfigurationHelper.bindingToAdd(theInitialSystemConfiguration,
+				"device.HumanSensors", "1.0.0",
+				"required_handsonwheelsensor",
+				"device.HandsOnWheelSensor", "1.0.0",
+				"provided_sensor");
+			
+			SystemConfigurationHelper.bindingToAdd(theInitialSystemConfiguration,
+					"driving.L3.HighwayChauffer", "1.0.0",
+					"required_humansensors",
+					"device.HumanSensors", "1.0.0",
+					"provided_sensor");
+		
 		
 		SystemConfigurationHelper.setParameter(theInitialSystemConfiguration, 
 				//"driving.L3.CityChauffer", "1.0.0", L3_DrivingServiceARC.PARAMETER_REFERENCESPEED, "100");

@@ -105,6 +105,7 @@ public class Activator implements BundleActivator {
 		
 		// Propiedad Interact-1
 		IKnowledgeProperty kp_DriverAttention = BasicMAPEKLiteLoopHelper.createKnowledgeProperty("DriverAttention");
+		kp_DriverAttention.setValue("LOOKING_FORWARD");
 		System.out.println(">>>>> KP CREADA: " + kp_DriverAttention);
 		System.out.println(">>>>> KP ID: " + kp_DriverAttention.getId());
 		System.out.println(">>>>> KP VALUE: " + kp_DriverAttention.getValue());
@@ -228,55 +229,47 @@ public class Activator implements BundleActivator {
 
 		
 		SystemConfigurationHelper.bindingToAdd(theInitialSystemConfiguration,
-			   // "driving.L3.CityChauffer", "1.0.0",
 				"driving.L3.HighwayChauffer", "1.0.0",
 			    "required_engine",
 			    "device.Engine", "1.0.0",
 			    "provided_device");
 
 		SystemConfigurationHelper.bindingToAdd(theInitialSystemConfiguration,
-			    //"driving.L3.CityChauffer", "1.0.0",
 				"driving.L3.HighwayChauffer", "1.0.0",
 			    "required_frontdistancesensor",
 			    "device.FrontDistanceSensor", "1.0.0",
 			    "provided_sensor");
 
 		SystemConfigurationHelper.bindingToAdd(theInitialSystemConfiguration,
-			    //"driving.L3.CityChauffer", "1.0.0",
 				"driving.L3.HighwayChauffer", "1.0.0",
 			    "required_leftlinesensor",
 			    "device.LeftLineSensor", "1.0.0",
 			    "provided_sensor");
 
 		SystemConfigurationHelper.bindingToAdd(theInitialSystemConfiguration,
-			    //"driving.L3.CityChauffer", "1.0.0",
 				"driving.L3.HighwayChauffer", "1.0.0",
 			    "required_rightlinesensor",
 			    "device.RightLineSensor", "1.0.0",
 			    "provided_sensor");
 
 		SystemConfigurationHelper.bindingToAdd(theInitialSystemConfiguration,
-			    //"driving.L3.CityChauffer", "1.0.0",
 				"driving.L3.HighwayChauffer", "1.0.0",
 			    "required_notificationservice",
 			    "interaction.NotificationService", "1.0.0",
 			    "provided_service");
 		SystemConfigurationHelper.bindingToAdd(theInitialSystemConfiguration,
-			    //"driving.L3.CityChauffer", "1.0.0",
 				"driving.L3.HighwayChauffer", "1.0.0",
 			    "required_roadsensor",
 			    "device.RoadSensor", "1.0.0",
 			    "provided_sensor");
 
 		SystemConfigurationHelper.bindingToAdd(theInitialSystemConfiguration,
-			    //"driving.L3.CityChauffer", "1.0.0",
 				"driving.L3.HighwayChauffer", "1.0.0",
 			    "required_fallbackplan",
 			    "driving.FallbackPlan.Emergency", "1.0.0",
 			    "provided_drivingservice");
 		
 		SystemConfigurationHelper.bindingToAdd(theInitialSystemConfiguration,
-			    //"driving.L3.CityChauffer", "1.0.0",
 				"driving.L3.HighwayChauffer", "1.0.0",
 			    "required_steering",
 			    "device.Steering", "1.0.0",
@@ -290,21 +283,18 @@ public class Activator implements BundleActivator {
 			    "provided_service");
 
 		SystemConfigurationHelper.bindingToAdd(theInitialSystemConfiguration,
-			    //"driving.L3.CityChauffer", "1.0.0",
 				"driving.L3.HighwayChauffer", "1.0.0",
 			    "required_reardistancesensor",
 			    "device.RearDistanceSensor", "1.0.0",
 			    "provided_sensor");
 
 		SystemConfigurationHelper.bindingToAdd(theInitialSystemConfiguration,
-			    //"driving.L3.CityChauffer", "1.0.0",
 				"driving.L3.HighwayChauffer", "1.0.0",
 			    "required_rightdistancesensor",
 			    "device.RightDistanceSensor", "1.0.0",
 			    "provided_sensor");
 
 		SystemConfigurationHelper.bindingToAdd(theInitialSystemConfiguration,
-			    //"driving.L3.CityChauffer", "1.0.0",
 				"driving.L3.HighwayChauffer", "1.0.0",
 			    "required_leftdistancesensor",
 			    "device.LeftDistanceSensor", "1.0.0",
@@ -344,7 +334,6 @@ public class Activator implements BundleActivator {
 		
 		
 		SystemConfigurationHelper.setParameter(theInitialSystemConfiguration, 
-				//"driving.L3.CityChauffer", "1.0.0", L3_DrivingServiceARC.PARAMETER_REFERENCESPEED, "100");
 				"driving.L3.HighwayChauffer", "1.0.0", L3_DrivingServiceARC.PARAMETER_REFERENCESPEED, "100");
 
 		return theInitialSystemConfiguration;

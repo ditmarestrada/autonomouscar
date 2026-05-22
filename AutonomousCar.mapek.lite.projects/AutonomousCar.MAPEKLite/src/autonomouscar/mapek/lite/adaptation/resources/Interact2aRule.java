@@ -9,10 +9,14 @@ import es.upv.pros.tatami.adaptation.mapek.lite.helpers.BasicMAPEKLiteLoopHelper
 import es.upv.pros.tatami.adaptation.mapek.lite.helpers.SystemConfigurationHelper;
 import es.upv.pros.tatami.adaptation.mapek.lite.structures.systemconfiguration.interfaces.IRuleSystemConfiguration;
 import es.upv.pros.tatami.osgi.utils.interfaces.ITimeStamped;
+import es.upv.pros.tatami.adaptation.mapek.lite.exceptions.analyzing.RuleException;
+import es.upv.pros.tatami.osgi.utils.logger.SmartLogger;
 
 public class Interact2aRule extends AdaptationRule {
 
 	public static final String ID = "Regla INTERACT-2a";
+	
+	protected static SmartLogger logger = SmartLogger.getLogger(Interact2aRule.class);
 
 	private IKnowledgeProperty kpActiveL3Service = null;
 	private IKnowledgeProperty kpDriverHandsOnWheel = null;
@@ -50,7 +54,7 @@ public class Interact2aRule extends AdaptationRule {
 	}
 
 	@Override
-	public IRuleSystemConfiguration onExecute(IKnowledgeProperty property) {
+	public IRuleSystemConfiguration onExecute(IKnowledgeProperty property) throws RuleException  {
 		if (kpActiveL3Service == null) {
 			kpActiveL3Service = BasicMAPEKLiteLoopHelper.getKnowledgeProperty("active-l3-service");
 		}
@@ -58,20 +62,29 @@ public class Interact2aRule extends AdaptationRule {
 			kpDriverHandsOnWheel = BasicMAPEKLiteLoopHelper.getKnowledgeProperty("driver-hands-on-wheel");
 		}
 
-		if (kpActiveL3Service == null || kpDriverHandsOnWheel == null) {
-			return null;
+		if (kpActiveL3Service == null) {
+			throw new RuleException("ActiveL3Service null", "La propiedad active-l3-service es nula");
+		}
+		if (kpDriverHandsOnWheel == null) {
+			throw new RuleException("DriverHandsOnWheel null", "La propiedad driver-hands-on-wheel es nula");
 		}
 
 		String activeL3 = (String) kpActiveL3Service.getValue();
 		Boolean handsOnWheel = (Boolean) kpDriverHandsOnWheel.getValue();
 
-		if (activeL3 == null || "NONE".equals(activeL3) || handsOnWheel == null) {
+		if (activeL3 == null || "NONE".equals(activeL3)) {
 			return null;
+		}
+		
+		if (handsOnWheel == null) {
+			throw new RuleException("DriverHandsOnWheel sin valor", "La propiedad driver-hands-on-wheel no tiene valor");
 		}
 
 		if (!handsOnWheel.booleanValue()) {
 			return null;
 		}
+		
+		logger.info("Ejecutando Regla INTERACT-2a: activando SteeringWheel HapticVibration");
 
 		IRuleComponentsSystemConfiguration cfg =
 			SystemConfigurationHelper.createPartialSystemConfiguration(ID + "_" + ITimeStamped.getCurrentTimeStamp());

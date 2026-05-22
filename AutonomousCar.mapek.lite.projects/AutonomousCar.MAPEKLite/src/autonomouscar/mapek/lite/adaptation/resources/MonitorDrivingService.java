@@ -19,7 +19,9 @@ public class MonitorDrivingService extends Monitor {
 	@Override
 	public IMonitor report(Object arg) {
 		String activeServiceId = (String) arg;
-		if ("NONE".equals(activeServiceId)) return this; 
+		
+		// No ignoramos NONE: el Knowledge debe reflejar también cuándo deja de haber un servicio L3 activo.
+		// if ("NONE".equals(activeServiceId)) return this; 
 		
 		IKnowledgeProperty kp = BasicMAPEKLiteLoopHelper.getKnowledgeProperty("active-l3-service");
 		

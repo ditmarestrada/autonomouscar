@@ -10,10 +10,13 @@ import es.upv.pros.tatami.adaptation.mapek.lite.helpers.BasicMAPEKLiteLoopHelper
 import es.upv.pros.tatami.adaptation.mapek.lite.helpers.SystemConfigurationHelper;
 import es.upv.pros.tatami.adaptation.mapek.lite.structures.systemconfiguration.interfaces.IRuleSystemConfiguration;
 import es.upv.pros.tatami.osgi.utils.interfaces.ITimeStamped;
+import es.upv.pros.tatami.osgi.utils.logger.SmartLogger;
 
 public class Interact3aRule extends AdaptationRule {
 
 	public static final String ID = "Regla INTERACT-3a";
+	
+	protected static SmartLogger logger = SmartLogger.getLogger(Interact3aRule.class);
 
 	private IKnowledgeProperty kpActiveL3Service = null;
 	private IKnowledgeProperty kpDriverSeatOccupied = null;
@@ -78,6 +81,8 @@ public class Interact3aRule extends AdaptationRule {
 		if (!seatOccupied.booleanValue()) {
 			throw new RuleException("Regla no aplicable", "El conductor no está sentado en el asiento");
 		}
+		
+		logger.info("Ejecutando Regla INTERACT-3a: activando DriverSeat HapticVibration y DriverDisplay VisualText");
 
 		IRuleComponentsSystemConfiguration cfg =
 			SystemConfigurationHelper.createPartialSystemConfiguration(ID + "_" + ITimeStamped.getCurrentTimeStamp());

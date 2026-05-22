@@ -1,6 +1,7 @@
 package autonomouscar.mapek.lite.adaptation.resources;
 
 import org.osgi.framework.BundleContext;
+import es.upv.pros.tatami.osgi.utils.logger.SmartLogger;
 
 import es.upv.pros.tatami.adaptation.mapek.lite.ARC.structures.systemconfiguration.interfaces.IRuleComponentsSystemConfiguration;
 import es.upv.pros.tatami.adaptation.mapek.lite.artifacts.components.AdaptationRule;
@@ -22,16 +23,25 @@ import sua.autonomouscar.infraestructure.interaction.ARC.VisualIconARC;
 public class Interact1aRule extends AdaptationRule {
 
 	public static final String ID = "Regla INTERACT-1a";
+	protected static SmartLogger logger = SmartLogger.getLogger(Interact1aRule.class);
 	private static final String VERSION = "1.0.0";
 
 	public Interact1aRule(BundleContext context) {
 		super(context, ID);
 		this.setListenToKnowledgePropertyChanges(MonitorDriverAttention.KP_DRIVER_ATTENTION);
+		this.setListenToKnowledgePropertyChanges(MonitorDriverHandsOnWheel.KP_DRIVER_HANDS);
+		this.setListenToKnowledgePropertyChanges(MonitorDriverSeatOccupied.KP_DRIVER_SEAT);
 	}
 
 	@Override
 	public boolean checkAffectedByChange(IKnowledgeProperty property) {
-		return property != null && MonitorDriverAttention.KP_DRIVER_ATTENTION.equals(property.getId());
+		if (property == null || property.getId() == null) {
+			return false;
+		}
+
+		return MonitorDriverAttention.KP_DRIVER_ATTENTION.equals(property.getId())
+			|| MonitorDriverAttention.KP_DRIVER_ATTENTION.equals(property.getId())
+			|| MonitorDriverSeatOccupied.KP_DRIVER_SEAT.equals(property.getId());
 	}
 
 	@Override
@@ -64,6 +74,8 @@ public class Interact1aRule extends AdaptationRule {
 		if (!humanSensors.areTheHandsOnTheWheel() || !humanSensors.isDriverSeatOccupied()) {
 			throw new RuleException("Regla no aplicable", "El conductor no está completamente listo");
 		}
+		
+		logger.info("Ejecutando Regla INTERACT-1a: activando SteeringWheel HapticVibration y DriverDisplay VisualIcon");
 
 		IRuleComponentsSystemConfiguration cfg =
 			SystemConfigurationHelper.createPartialSystemConfiguration(ID + "_" + ITimeStamped.getCurrentTimeStamp());

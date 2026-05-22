@@ -76,9 +76,7 @@ public class Activator implements BundleActivator {
 		BasicMAPEKLiteLoopHelper.ADAPTATIONREPORTS_FOLDER = System.getProperty("adaptationreports.folder");
 		
 		// STARTING THE MAPE-K LOOP
-		BasicMAPEKLiteLoopHelper.startLoopModules();
-		
-		System.out.println(">>>>> LOOP INICIADO");
+		BasicMAPEKLiteLoopHelper.startLoopModules();				
 		
 		// ---------------------------------------------------------
 		// 1. ADAPTATION PROPERTIES (Knowledge)
@@ -104,7 +102,20 @@ public class Activator implements BundleActivator {
 		kp_Fallback.setValue("EMERGENCY");
 		kp_SensorFrontDistance.setValue("FrontDistanceSensor");
 		//kp_SensorFrontDistance.setValue("NO_DISPONIBLE");
+		
+		// Propiedad Interact-1
+		IKnowledgeProperty kp_DriverAttention = BasicMAPEKLiteLoopHelper.createKnowledgeProperty("DriverAttention");
+		System.out.println(">>>>> KP CREADA: " + kp_DriverAttention);
+		System.out.println(">>>>> KP ID: " + kp_DriverAttention.getId());
+		System.out.println(">>>>> KP VALUE: " + kp_DriverAttention.getValue());
+		
+		// Propiedad Interact-2
+		IKnowledgeProperty kp_DriverHandsOnWheel = BasicMAPEKLiteLoopHelper.createKnowledgeProperty("driver-hands-on-wheel");
+		
+		// Propiedad Interact-3
+		IKnowledgeProperty kp_DriverSeatOccupied = BasicMAPEKLiteLoopHelper.createKnowledgeProperty("driver-seat-occupied");
 
+		
 		BasicMAPEKLiteLoopHelper.addInitialSelfConfigurationCapabilities(createInitialSystemConfiguration());
 
 		// ---------------------------------------------------------
@@ -120,6 +131,14 @@ public class Activator implements BundleActivator {
         IAdaptiveReadyComponent theADS_L3_4_Rule = BasicMAPEKLiteLoopHelper.deployAdaptationRule(new ADS_L3_4_AdaptationRule(bundleContext));
  		IAdaptiveReadyComponent theADS_L3_5_Rule = BasicMAPEKLiteLoopHelper.deployAdaptationRule(new ADS_L3_5_AdaptationRule(bundleContext));
  		
+ 		IAdaptiveReadyComponent interact1aRuleARC = BasicMAPEKLiteLoopHelper.deployAdaptationRule(new Interact1aRule(bundleContext));
+ 		IAdaptiveReadyComponent interact1bRuleARC = BasicMAPEKLiteLoopHelper.deployAdaptationRule(new Interact1bRule(bundleContext));
+ 		IAdaptiveReadyComponent interact1cRuleARC = BasicMAPEKLiteLoopHelper.deployAdaptationRule(new Interact1cRule(bundleContext));	
+ 		IAdaptiveReadyComponent interact2aRuleARC = BasicMAPEKLiteLoopHelper.deployAdaptationRule(new Interact2aRule(bundleContext));
+ 		IAdaptiveReadyComponent interact2bRuleARC = BasicMAPEKLiteLoopHelper.deployAdaptationRule(new Interact2bRule(bundleContext));
+ 		IAdaptiveReadyComponent interact3aRuleARC = BasicMAPEKLiteLoopHelper.deployAdaptationRule(new Interact3aRule(bundleContext));
+ 		IAdaptiveReadyComponent interact3bRuleARC = BasicMAPEKLiteLoopHelper.deployAdaptationRule(new Interact3bRule(bundleContext));
+ 		
 		// ---------------------------------------------------------
 		// 3. MONITORS
 		// ---------------------------------------------------------
@@ -127,56 +146,10 @@ public class Activator implements BundleActivator {
 		IAdaptiveReadyComponent theMonitorCarretera = BasicMAPEKLiteLoopHelper.deployMonitor(new MonitorCarretera(bundleContext));
 		IAdaptiveReadyComponent theMonitorDS = BasicMAPEKLiteLoopHelper.deployMonitor(new MonitorDrivingService(bundleContext));
 		IAdaptiveReadyComponent theMonitorSensores = BasicMAPEKLiteLoopHelper.deployMonitor(new MonitorSensores(bundleContext));
-
 		
-		
-		
-		// ADAPTATION PROPERTIES
-		IKnowledgeProperty kp_Modo = BasicMAPEKLiteLoopHelper.createKnowledgeProperty("Modo");
-		System.out.println(">>>>> CREANDO KNOWLEDGE PROPERTY");
-		IKnowledgeProperty kp_DriverAttention = BasicMAPEKLiteLoopHelper.createKnowledgeProperty("DriverAttention");
-		System.out.println(">>>>> KP CREADA: " + kp_DriverAttention);
-		System.out.println(">>>>> KP ID: " + kp_DriverAttention.getId());
-		System.out.println(">>>>> KP VALUE: " + kp_DriverAttention.getValue());
-		IKnowledgeProperty kp_DriverHandsOnWheel = BasicMAPEKLiteLoopHelper.createKnowledgeProperty("driver-hands-on-wheel");
-		IKnowledgeProperty kp_DriverSeatOccupied = BasicMAPEKLiteLoopHelper.createKnowledgeProperty("driver-seat-occupied");
-
-		// ADAPTATION RULES
- 		IAdaptiveReadyComponent theIluminacionConfortAdaptationRuleARC = BasicMAPEKLiteLoopHelper.deployAdaptationRule(new IluminacionConfortAdaptationRule(bundleContext));
- 		
- 		System.out.println(">>>>> DESPLEGANDO REGLAS");
- 		IAdaptiveReadyComponent interact1aRuleARC =
- 				BasicMAPEKLiteLoopHelper.deployAdaptationRule(new Interact1aRule(bundleContext));
-
- 		IAdaptiveReadyComponent interact1bRuleARC =
- 				BasicMAPEKLiteLoopHelper.deployAdaptationRule(new Interact1bRule(bundleContext));
-
- 		IAdaptiveReadyComponent interact1cRuleARC =
- 				BasicMAPEKLiteLoopHelper.deployAdaptationRule(new Interact1cRule(bundleContext));
- 		
- 		IAdaptiveReadyComponent interact2aRuleARC =
- 				BasicMAPEKLiteLoopHelper.deployAdaptationRule(new Interact2aRule(bundleContext));
-
- 		IAdaptiveReadyComponent interact2bRuleARC =
- 				BasicMAPEKLiteLoopHelper.deployAdaptationRule(new Interact2bRule(bundleContext));
- 			
- 		IAdaptiveReadyComponent interact3aRuleARC =
- 					BasicMAPEKLiteLoopHelper.deployAdaptationRule(new Interact3aRule(bundleContext));
-
- 		IAdaptiveReadyComponent interact3bRuleARC =
- 					BasicMAPEKLiteLoopHelper.deployAdaptationRule(new Interact3bRule(bundleContext));
- 		
-		// MONITORS
-		IAdaptiveReadyComponent theModoMonitorARC = BasicMAPEKLiteLoopHelper.deployMonitor(new MonitorModo(bundleContext));
-		
-		IAdaptiveReadyComponent driverAttentionMonitorARC =
-				BasicMAPEKLiteLoopHelper.deployMonitor(new MonitorDriverAttention(bundleContext));
-		
-		IAdaptiveReadyComponent driverHandsOnWheelMonitorARC =
-				BasicMAPEKLiteLoopHelper.deployMonitor(new MonitorDriverHandsOnWheel(bundleContext));
-		
-		IAdaptiveReadyComponent driverSeatOccupiedMonitorARC =
-				BasicMAPEKLiteLoopHelper.deployMonitor(new MonitorDriverSeatOccupied(bundleContext));
+		IAdaptiveReadyComponent driverAttentionMonitorARC = BasicMAPEKLiteLoopHelper.deployMonitor(new MonitorDriverAttention(bundleContext));		
+		IAdaptiveReadyComponent driverHandsOnWheelMonitorARC = BasicMAPEKLiteLoopHelper.deployMonitor(new MonitorDriverHandsOnWheel(bundleContext));
+		IAdaptiveReadyComponent driverSeatOccupiedMonitorARC = BasicMAPEKLiteLoopHelper.deployMonitor(new MonitorDriverSeatOccupied(bundleContext));
 
 		// ---------------------------------------------------------
 		// 4. PROBES
@@ -185,26 +158,19 @@ public class Activator implements BundleActivator {
 		BasicMAPEKLiteLoopHelper.deployProbe(new SondaCarretera(bundleContext), theMonitorCarretera);
 		BasicMAPEKLiteLoopHelper.deployProbe(new SondaDrivingService(bundleContext), theMonitorDS);
 		BasicMAPEKLiteLoopHelper.deployProbe(new SondaSensores(bundleContext), theMonitorSensores);
-
-
 		
 		logger.info("Creada property road-type: " + kp_RoadType);
 		logger.info("Creada property active-l3-service: " + kp_ActiveL3Service);
 		logger.info("Creada property sensor-front-distance: " + kp_SensorFrontDistance);
-	
-		
+			
 		IAdaptiveReadyComponent driverAttentionProbeARC =
-				BasicMAPEKLiteLoopHelper.deployProbe(new SondaDriverAttention(bundleContext), driverAttentionMonitorARC);
-		
+				BasicMAPEKLiteLoopHelper.deployProbe(new SondaDriverAttention(bundleContext), driverAttentionMonitorARC);		
 		IAdaptiveReadyComponent driverHandsOnWheelProbeARC =
-				BasicMAPEKLiteLoopHelper.deployProbe(new SondaDriverHandsOnWheel(bundleContext), driverHandsOnWheelMonitorARC);
-		
+				BasicMAPEKLiteLoopHelper.deployProbe(new SondaDriverHandsOnWheel(bundleContext), driverHandsOnWheelMonitorARC);		
 		IAdaptiveReadyComponent driverSeatOccupiedProbeARC =
 				BasicMAPEKLiteLoopHelper.deployProbe(new SondaDriverSeatOccupied(bundleContext), driverSeatOccupiedMonitorARC);
 
-		//
-		
-		System.out.println(">>>>> ACTIVATOR COMPLETADO SIN ERRORES");
+		//		
 	}
 
 	public void stop(BundleContext bundleContext) throws Exception {

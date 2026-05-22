@@ -208,6 +208,14 @@ public class Activator implements BundleActivator {
 		// Añadimos el Sensor Derecho (Base para test L3-8)
 		//SystemConfigurationHelper.componentToAdd(theInitialSystemConfiguration, "device.RightDistanceSensor", "1.0.0");
 		
+		// Para Interact-1 , Interact-2 y Interact-3 
+		
+		SystemConfigurationHelper.componentToAdd(theInitialSystemConfiguration, "device.HumanSensors", "1.0.0");
+		SystemConfigurationHelper.componentToAdd(theInitialSystemConfiguration, "device.DriverFaceMonitor", "1.0.0");
+		SystemConfigurationHelper.componentToAdd(theInitialSystemConfiguration, "device.DriverSeatSensor", "1.0.0");
+		SystemConfigurationHelper.componentToAdd(theInitialSystemConfiguration, "device.CopilotSeatSensor", "1.0.0");
+		SystemConfigurationHelper.componentToAdd(theInitialSystemConfiguration, "device.HandsOnWheelSensor", "1.0.0");
+		
 		// Bindings iniciales
 		SystemConfigurationHelper.bindingToAdd(theInitialSystemConfiguration, 
 				"driving.FallbackPlan.Emergency", "1.0.0", FallbackPlanARC.REQUIRED_ENGINE,
@@ -301,6 +309,39 @@ public class Activator implements BundleActivator {
 			    "required_leftdistancesensor",
 			    "device.LeftDistanceSensor", "1.0.0",
 			    "provided_sensor");
+		
+
+
+		SystemConfigurationHelper.bindingToAdd(theInitialSystemConfiguration,
+				"device.HumanSensors", "1.0.0",
+				"required_facemonitor",
+				"device.DriverFaceMonitor", "1.0.0",
+				"provided_sensor");
+
+			SystemConfigurationHelper.bindingToAdd(theInitialSystemConfiguration,
+				"device.HumanSensors", "1.0.0",
+				"required_driverseatsensor",
+				"device.DriverSeatSensor", "1.0.0",
+				"provided_sensor");
+
+			SystemConfigurationHelper.bindingToAdd(theInitialSystemConfiguration,
+				"device.HumanSensors", "1.0.0",
+				"required_copilotseatsensor",
+				"device.CopilotSeatSensor", "1.0.0",
+				"provided_sensor");
+
+			SystemConfigurationHelper.bindingToAdd(theInitialSystemConfiguration,
+				"device.HumanSensors", "1.0.0",
+				"required_handsonwheelsensor",
+				"device.HandsOnWheelSensor", "1.0.0",
+				"provided_sensor");
+			
+			SystemConfigurationHelper.bindingToAdd(theInitialSystemConfiguration,
+					"driving.L3.HighwayChauffer", "1.0.0",
+					"required_humansensors",
+					"device.HumanSensors", "1.0.0",
+					"provided_sensor");
+		
 		
 		SystemConfigurationHelper.setParameter(theInitialSystemConfiguration, 
 				//"driving.L3.CityChauffer", "1.0.0", L3_DrivingServiceARC.PARAMETER_REFERENCESPEED, "100");

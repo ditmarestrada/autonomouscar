@@ -336,6 +336,16 @@ public class MyCommandProvider {
 			sensor.setDistance(distance);
 	}
 	
+	public void sensor(String s, String state) {
+	    IKnowledgeProperty kp = BasicMAPEKLiteLoopHelper.getKnowledgeProperty("sensor-front-distance");
+	    if (kp != null && s.equalsIgnoreCase("front")) {
+	        if (state.equalsIgnoreCase("fail"))
+	            kp.setValue("NO_DISPONIBLE");
+	        else if (state.equalsIgnoreCase("ok"))
+	            kp.setValue("FrontDistanceSensor");
+	    }
+	}
+	
 	public void next() {
 		IManualSimulatorStepsManager manager = OSGiUtils.getService(context, IManualSimulatorStepsManager.class);
 		if ( manager != null )
